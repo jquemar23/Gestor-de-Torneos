@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sports Tournament Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#1D4ED8', // blue-700
+              hover: '#1E40AF', // blue-800
+              light: '#EFF6FF', // blue-50
+            },
+            secondary: {
+              DEFAULT: '#059669', // emerald-600
+              hover: '#047857', // emerald-700
+            },
+            accent: {
+              DEFAULT: '#F59E0B', // amber-500
+            },
+            background: '#F3F4F6', // gray-100
+            surface: '#FFFFFF', // white
+            textPrimary: '#1F2937', // gray-800
+            textSecondary: '#4B5563', // gray-600
+          }
+        }
+      }
+    }
+  </script>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+    "react/": "https://esm.sh/react@^19.1.0/",
+    "react": "https://esm.sh/react@^19.1.0",
+    "react-router-dom": "https://esm.sh/react-router-dom@^6.24.0"
+  }
+}
+</script>
+</head>
+<body class="bg-background">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html><link rel="stylesheet" href="index.css">
+<script src="index.tsx" type="module"></script>
