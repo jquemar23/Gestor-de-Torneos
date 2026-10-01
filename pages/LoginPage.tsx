@@ -15,7 +15,7 @@ const LoginPage: React.FC = () => {
   const { login, register } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -25,9 +25,8 @@ const LoginPage: React.FC = () => {
         return;
       }
       if (email && password) {
-        // In a real app, check if email is already taken
         try {
-          register(email, password); // register will also log in
+          await register(email, password);
           navigate('/');
         } catch (err: any) {
           setError(err.message || 'Error al registrar la cuenta.');
@@ -35,18 +34,18 @@ const LoginPage: React.FC = () => {
       } else {
         setError('Por favor, completa todos los campos.');
       }
-    } else {
-      // Login mode
-      if (email && password) {
-        try {
-            login(email, password); // Keep password field for login logic, though current mock doesn't use it
-            navigate('/');
-        } catch (err: any) {
-            setError(err.message || 'Error al iniciar sesión. Verifica tus credenciales.');
-        }
-      } else {
-        setError('Por favor, introduce email y contraseña.');
+      return;
+    }
+
+    if (email && password) {
+      try {
+        await login(email, password);
+        navigate('/');
+      } catch (err: any) {
+        setError(err.message || 'Error al iniciar sesión. Verifica tus credenciales.');
       }
+    } else {
+      setError('Por favor, introduce email y contraseña.');
     }
   };
 

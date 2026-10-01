@@ -1,17 +1,12 @@
 import React, { createContext, useState, ReactNode, useEffect } from 'react';
-
-interface User {
-  email: string;
-  // In a real app, password would be hashed and stored securely
-  // For this mock, we don't store the password after registration
-}
+import { api } from '../api';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   userEmail: string | null;
-  login: (email: string, password?: string) => void; // password optional for mock flexibility
+  login: (email: string, password: string) => Promise<void>;
   logout: () => void;
-  register: (email: string, password?: string) => void; // password optional for mock flexibility
+  register: (email: string, password: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,20 +15,9 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-// Mock user storage
-const getMockUsers = (): User[] => {
-  const usersStr = localStorage.getItem('mockUsers');
-  return usersStr ? JSON.parse(usersStr) : [];
-};
-
-const saveMockUsers = (users: User[]) => {
-  localStorage.setItem('mockUsers', JSON.stringify(users));
-};
-
-
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return localStorage.getItem('isAuthenticated') === 'true';
+    return Boolean(localStorage.getItem('auth_token'));
   });
   const [userEmail, setUserEmail] = useState<string | null>(() => {
     return localStorage.getItem('userEmail');
@@ -48,34 +32,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, [isAuthenticated, userEmail]);
 
-  const login = (email: string, _password?: string) => {
-    // In a real app, you'd verify credentials against stored users
-    // For this mock, any login attempt for a "known" (can be any) email is successful
-    // Or if we want to be slightly more strict, check if user exists in mockUsers
-    // const users = getMockUsers();
-    // if (!users.find(u => u.email === email) && users.length > 0) { // Allow first ever login to pass
-    //   throw new Error("Usuario no encontrado o contraseña incorrecta.");
-    // }
+  useEffect(() => {
+    const token = localStorage.getItem('auth_token');
+    if (!token) return;
+
+    api.auth.me()
+      .then(({ user }) => {
+        setUserEmail(user.email);
+        setIsAuthenticated(true);
+      })
+      .catch(() => {
+        localStorage.removeItem('auth_token');
+        setUserEmail(null);
+        setIsAuthenticated(false);
+      });
+  }, []);
+
+  const login = async (email: string, password: string) => {
+    const response = await api.auth.login({ email, password });
+    localStorage.setItem('auth_token', response.token);
     setIsAuthenticated(true);
-    setUserEmail(email);
+    setUserEmail(response.user.email);
   };
 
   const logout = () => {
+    localStorage.removeItem('auth_token');
     setIsAuthenticated(false);
     setUserEmail(null);
   };
 
-  const register = (email: string, _password?: string) => {
-    const users = getMockUsers();
-    if (users.find(u => u.email === email)) {
-      throw new Error('Este correo electrónico ya está registrado.');
-    }
-    // Add new user (without storing password in this mock)
-    users.push({ email });
-    saveMockUsers(users);
-    
-    // Automatically log in after registration
-    login(email);
+  const register = async (email: string, password: string) => {
+    const response = await api.auth.register({ email, password });
+    localStorage.setItem('auth_token', response.token);
+    setIsAuthenticated(true);
+    setUserEmail(response.user.email);
   };
 
   return (
