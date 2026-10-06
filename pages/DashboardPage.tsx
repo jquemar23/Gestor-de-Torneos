@@ -2,10 +2,9 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTournaments } from '../hooks/useTournaments';
 import { useAuth } from '../hooks/useAuth';
-import Card from '../components/ui/Card';
-import Badge from '../components/ui/Badge';
 import { Tournament, TournamentStatus } from '../types';
 import { ICONS } from '../constants';
+import Badge from '../components/ui/Badge';
 
 const DashboardPage: React.FC = () => {
   const { tournaments, isLoading } = useTournaments(); // Added isLoading
@@ -13,7 +12,7 @@ const DashboardPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex justify-center items-center h-64" role="status">
         <p className="text-textSecondary text-lg">Cargando datos del torneo...</p>
       </div>
     );
@@ -28,66 +27,71 @@ const DashboardPage: React.FC = () => {
     .slice(0, 5);
 
   const StatCard: React.FC<{ title: string; value: string | number; icon: React.ReactNode }> = ({ title, value, icon }) => (
-    <Card className="flex-1">
-      <div className="flex items-center">
-        <div className="p-3 rounded-full bg-primary-light text-primary mr-4">
-          {icon}
-        </div>
-        <div>
-          <p className="text-sm font-medium text-textSecondary">{title}</p>
-          <p className="text-2xl font-semibold text-textPrimary">{value}</p>
-        </div>
+    <article className="stat-card">
+      <div className="stat-icon" aria-hidden="true">{icon}</div>
+      <div>
+        <p className="stat-label">{title}</p>
+        <p className="stat-value">{value}</p>
       </div>
-    </Card>
+    </article>
   );
 
   return (
     <div className="space-y-8">
-      <h1 className="text-3xl font-bold text-textPrimary">Panel Principal</h1>
-      <p className="text-lg text-textSecondary">¡Bienvenido de nuevo, {userEmail || 'Organizador'}!</p>
+      <section className="dashboard-intro">
+        <div className="dashboard-intro-copy">
+          <span className="eyebrow">Centro de control</span>
+          <h1>Tu temporada, bajo control.</h1>
+          <p>¡Bienvenido de nuevo, {userEmail || 'Organizador'}!</p>
+        </div>
+        <div className="dashboard-date">{tournaments.length} {tournaments.length === 1 ? 'torneo en total' : 'torneos en total'}</div>
+      </section>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="stat-grid">
         <StatCard title="Torneos Activos" value={activeTournaments} icon={ICONS.TROPHY} />
         <StatCard title="Partidos Programados Totales" value={totalMatches} icon={ICONS.CALENDAR} />
         <StatCard title="Equipos Registrados" value={totalTeams} icon={ICONS.USERS} />
       </div>
 
-      <Card title="Actividad Reciente">
+      <section className="surface-panel">
+        <div className="surface-heading"><h2>Actividad reciente</h2></div>
+        <div className="surface-content">
         {recentTournaments.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="modern-table">
+              <thead>
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">Torneo</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">Estado</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">Partidos</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">Equipos</th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider">Fecha de Inicio</th>
+                  <th scope="col">Torneo</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Partidos</th>
+                  <th scope="col">Equipos</th>
+                  <th scope="col">Fecha de inicio</th>
                 </tr>
               </thead>
-              <tbody className="bg-surface divide-y divide-gray-200">
+              <tbody>
                 {recentTournaments.map((tournament: Tournament) => (
-                  <tr key={tournament.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Link to={`/tournaments/${tournament.id}`} className="text-primary hover:underline font-medium">
+                  <tr key={tournament.id}>
+                    <td>
+                      <Link to={`/tournaments/${tournament.id}`}>
                         {tournament.name}
                       </Link>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td>
                       <Badge status={tournament.status} />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{tournament.matches.length}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{tournament.teams.length}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{tournament.startDate}</td>
+                    <td>{tournament.matches.length}</td>
+                    <td>{tournament.teams.length}</td>
+                    <td>{tournament.startDate}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <p className="text-textSecondary text-center py-4">No hay actividad reciente para mostrar. ¡Crea tu primer torneo!</p>
+          <p className="text-textSecondary text-center py-8">No hay actividad reciente para mostrar. ¡Crea tu primer torneo!</p>
         )}
-      </Card>
+        </div>
+      </section>
     </div>
   );
 };

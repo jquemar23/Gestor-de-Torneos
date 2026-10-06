@@ -9,12 +9,12 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="app-shell min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="page-content">
         {children}
       </main>
-      <footer className="bg-gray-800 text-white text-center py-4">
+      <footer className="site-footer">
         <p>&copy; {new Date().getFullYear()} {APP_NAME}. Todos los derechos reservados.</p>
       </footer>
     </div>

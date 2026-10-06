@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthProvider } from './contexts/AuthContext';
 import { TournamentProvider } from './contexts/TournamentContext';
+import './index.css';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {

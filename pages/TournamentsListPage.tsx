@@ -55,7 +55,7 @@ const TournamentsListPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
+      <div className="flex justify-center items-center h-64" role="status">
         <p className="text-textSecondary text-lg">Cargando torneos...</p>
       </div>
     );
@@ -63,15 +63,19 @@ const TournamentsListPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-        <h1 className="text-3xl font-bold text-textPrimary">Torneos</h1>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span className="eyebrow">Competiciones</span>
+          <h1 className="page-title">Torneos</h1>
+          <p className="page-subtitle">Administra tus competiciones y consulta su actividad.</p>
+        </div>
         <Button onClick={openNewTournamentModal} leftIcon={ICONS.PLUS}>
-          Nuevo Torneo
+          Crear torneo
         </Button>
       </div>
 
-      <Card>
-        <div className="p-4 flex flex-col md:flex-row gap-4 border-b border-gray-200">
+      <section className="surface-panel">
+        <div className="tournament-toolbar">
           <Input
             placeholder="Buscar torneos..."
             value={searchTerm}
@@ -93,28 +97,28 @@ const TournamentsListPage: React.FC = () => {
 
         {filteredTournaments.length > 0 ? (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="modern-table">
+              <thead>
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase">Nombre</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase">Estado</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase">Fecha de Inicio</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase">Fecha de Fin</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase">Acciones</th>
+                  <th>Nombre</th>
+                  <th>Estado</th>
+                  <th>Fecha de inicio</th>
+                  <th>Fecha de fin</th>
+                  <th>Acciones</th>
                 </tr>
               </thead>
-              <tbody className="bg-surface divide-y divide-gray-200">
+              <tbody>
                 {filteredTournaments.map(tournament => (
-                  <tr key={tournament.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Link to={`/tournaments/${tournament.id}`} className="text-primary hover:underline font-medium">
+                  <tr key={tournament.id}>
+                    <td>
+                      <Link to={`/tournaments/${tournament.id}`}>
                         {tournament.name}
                       </Link>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap"><Badge status={tournament.status} /></td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{tournament.startDate}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-textSecondary">{tournament.endDate}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                    <td><Badge status={tournament.status} /></td>
+                    <td>{tournament.startDate}</td>
+                    <td>{tournament.endDate}</td>
+                    <td>
                        <Button variant="ghost" size="sm" onClick={() => handleEditTournament(tournament)} title="Editar Torneo">
                          {ICONS.EDIT}
                        </Button>
@@ -132,7 +136,7 @@ const TournamentsListPage: React.FC = () => {
             {tournaments.length === 0 ? "Aún no has creado ningún torneo. ¡Empieza creando uno!" : "No hay torneos que coincidan con tus criterios." }
           </p>
         )}
-      </Card>
+      </section>
       <TournamentFormModal 
         isOpen={isModalOpen}
         onClose={() => { setIsModalOpen(false); setEditingTournament(null); }}

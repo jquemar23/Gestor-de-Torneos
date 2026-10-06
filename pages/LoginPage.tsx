@@ -4,7 +4,7 @@ import { useAuth } from '../hooks/useAuth';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
-import { APP_NAME } from '../constants';
+import { APP_NAME, ICONS } from '../constants';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -58,11 +58,12 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="login-screen">
       <Card className="w-full max-w-md">
+        <div className="login-brand" aria-hidden="true">{ICONS.TROPHY}</div>
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary">{APP_NAME}</h1>
-          <p className="text-textSecondary">
+          <p className="text-textSecondary mt-2">
             {isRegisterMode ? 'Crea una nueva cuenta para empezar.' : '¡Bienvenido de nuevo! Por favor, inicia sesión.'}
           </p>
         </div>
@@ -102,7 +103,7 @@ const LoginPage: React.FC = () => {
           </Button>
         </form>
         <div className="mt-6 text-center">
-          <button onClick={toggleMode} className="text-sm text-primary hover:underline">
+          <button onClick={toggleMode} className="login-toggle text-sm text-primary hover:underline">
             {isRegisterMode ? '¿Ya tienes una cuenta? Iniciar Sesión' : '¿No tienes cuenta? Crear una cuenta'}
           </button>
         </div>

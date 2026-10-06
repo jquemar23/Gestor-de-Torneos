@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, NavLink as RouterNavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { APP_NAME, ICONS } from '../../constants';
 import Button from '../ui/Button';
@@ -14,38 +14,28 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-primary shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <Link to="/" className="flex-shrink-0 text-white text-xl font-bold">
-              {APP_NAME}
-            </Link>
+    <header className="site-header">
+      <nav className="nav-inner" aria-label="Navegación principal">
+        <Link to="/" className="brand-lockup">
+          <span className="brand-mark" aria-hidden="true">{ICONS.TROPHY}</span>
+          <span>{APP_NAME}</span>
+        </Link>
+        {isAuthenticated && (
+          <div className="nav-links">
+            <NavLink to="/">Resumen</NavLink>
+            <NavLink to="/tournaments">Torneos</NavLink>
           </div>
-          <div className="hidden md:block">
-            {isAuthenticated && (
-              <div className="ml-10 flex items-baseline space-x-4">
-                <NavLink to="/">Panel Principal</NavLink>
-                <NavLink to="/tournaments">Torneos</NavLink>
-              </div>
-            )}
+        )}
+        {isAuthenticated && (
+          <div className="nav-account">
+            <span className="account-avatar" aria-hidden="true">{APP_NAME.slice(0, 2).toUpperCase()}</span>
+            <Button onClick={handleLogout} variant="ghost" size="sm" leftIcon={ICONS.LOGOUT}>
+              Salir
+            </Button>
           </div>
-          <div className="hidden md:block">
-            {isAuthenticated && (
-              <Button 
-                onClick={handleLogout} 
-                variant="ghost" 
-                className="text-primary-light hover:bg-primary-hover hover:text-white"
-                leftIcon={<span className="text-primary-light">{ICONS.LOGOUT}</span>}
-              >
-                Cerrar Sesión
-              </Button>
-            )}
-          </div>
-          {/* Mobile menu button - can be implemented later */}
-        </div>
-      </div>
-    </nav>
+        )}
+      </nav>
+    </header>
   );
 };
 
@@ -55,12 +45,13 @@ interface NavLinkProps {
 }
 
 const NavLink: React.FC<NavLinkProps> = ({ to, children }) => (
-  <Link
+  <RouterNavLink
     to={to}
-    className="text-primary-light hover:bg-primary-hover hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors"
+    end={to === '/'}
+    className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
   >
     {children}
-  </Link>
+  </RouterNavLink>
 );
 
 
